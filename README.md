@@ -1,41 +1,58 @@
+<!-- ===================== HEADER BANNER ===================== -->
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1f6b42,50:2d8653,100:52c27a&height=200&section=header&text=Craftez%20My%20Resume&fontSize=52&fontColor=ffffff&fontAlignY=38&desc=Build%20a%20professional%20ATS-ready%20resume%20in%20minutes&descSize=18&descAlignY=60&descAlign=50" alt="Craftez My Resume"/>
+</p>
+
+<!-- ===================== LOGO + TYPING ===================== -->
 <div align="center">
 
-<img src="logo.png" alt="Craftez My Resume" width="120"/>
+<img src="logo.png" alt="CMR Logo" width="110"/>
 
-# Craftez My Resume (CMR)
+<br/>
 
-### Build a professional, ATS-ready resume in minutes — completely free.
+<a href="https://vignesh2027.github.io/Craftez_my_resume/">
+  <img src="https://readme-typing-svg.demolab.com/?font=Poppins&weight=600&size=24&pause=1000&color=2D8653&center=true&vCenter=true&width=600&lines=170%2B+Professional+Templates;Real-Time+ATS+Score+Checker;AI-Powered+Resume+Assistant;100%25+Free+%E2%80%94+No+Watermarks%2C+No+Signup" alt="Typing SVG"/>
+</a>
 
-[![Live Site](https://img.shields.io/badge/Live-Demo-2d8653?style=for-the-badge&logo=googlechrome&logoColor=white)](https://vignesh2027.github.io/Craftez_my_resume/)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-[![Made with](https://img.shields.io/badge/Made%20with-HTML%20%7C%20CSS%20%7C%20JS-orange?style=for-the-badge)](#)
+<br/><br/>
 
-*No signup. No watermarks. No hidden plans. Your data never leaves your browser.*
+<!-- ===================== BADGES ===================== -->
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-2d8653?style=for-the-badge&logoColor=white)](https://vignesh2027.github.io/Craftez_my_resume/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
+[![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](#)
+[![Made with Love](https://img.shields.io/badge/Made_with-♥-e91e63?style=for-the-badge)](#)
+
+<img src="https://img.shields.io/github/stars/vignesh2027/Craftez_my_resume?style=social" alt="Stars"/>
+&nbsp;
+<img src="https://img.shields.io/github/forks/vignesh2027/Craftez_my_resume?style=social" alt="Forks"/>
 
 </div>
 
----
+<br/>
 
-## ✨ Highlights
+<!-- ===================== ANIMATED DIVIDER ===================== -->
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%"/>
+
+## ✨ Why Craftez My Resume?
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
 ### 🎨 170+ Professional Templates
-Classic, modern, academic, two-column, photo, and premium one-page designs — every style for every industry.
+Classic, modern, academic, two-column, photo, and premium one-page designs — a style for every industry.
 
 ### 📊 Real-Time ATS Score
-A live 30-point ATS checker that grades your resume as you type and tells you exactly what to fix.
+A live 30-point checker grades your resume as you type and shows exactly what to fix.
 
 ### 🤖 AI Resume Assistant
-Describe yourself in one sentence and watch your entire resume fill itself — summary, experience, skills, and more.
+Describe yourself in one line and watch your entire resume fill itself — summary, experience, skills, and more.
 
 </td>
 <td width="50%" valign="top">
 
 ### 🔒 100% Private
-Everything runs in your browser. No account, no server, no tracking. Your resume is yours alone.
+Everything runs in your browser. No account, no server, no tracking.
 
 ### 🎯 Drag-to-Reorder Sections
 Rearrange any section live in the preview to craft the perfect layout.
@@ -47,38 +64,44 @@ Download a crisp, watermark-free PDF or export to Word in one click.
 </tr>
 </table>
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%"/>
 
-## 🚀 Features
+## 🚀 Features at a Glance
 
-- **Live Preview** — every change reflects instantly on the right
-- **ATS File Checker** — upload an existing PDF/DOCX and get a detailed score with fixes
-- **28 Color Themes** — recolor any template instantly, including black & white
-- **Cover Letter Builder** — 6 templates with signature support
-- **CV Formats** — dedicated academic CV layouts
-- **Rich Sections** — Experience, Education, Skills, Projects, Certifications, Awards, Languages
-- **Smart Summary Writer** — generates a complete summary from your full profile
-- **Installable PWA** — works offline, add to home screen
-- **Fully Responsive** — build on desktop, mobile, or tablet
+```text
+✓ Live Preview            ✓ ATS File Checker (PDF/DOCX upload)
+✓ 28 Color Themes         ✓ Cover Letter Builder + Signature
+✓ Academic CV Formats     ✓ Smart Summary Writer
+✓ Installable PWA         ✓ Fully Responsive (desktop / mobile)
+✓ Offline Support         ✓ Zero Watermarks · Zero Signup
+```
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%"/>
 
-## 🖥️ Tech Stack
+## 🛠️ Built With
+
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=html,css,js,github&theme=light" alt="Tech Stack"/>
+</p>
+
+<div align="center">
 
 | Layer | Technology |
-|-------|-----------|
-| **Frontend** | Vanilla HTML5, CSS3, JavaScript (ES6+) |
+|:-----:|:----------:|
+| **Frontend** | Vanilla HTML5 · CSS3 · JavaScript (ES6+) |
 | **PDF Export** | html2pdf.js |
-| **Document Parsing** | PDF.js |
-| **Storage** | Browser localStorage (100% client-side) |
+| **Doc Parsing** | PDF.js |
+| **Storage** | Browser localStorage — 100% client-side |
 | **Hosting** | GitHub Pages |
-| **PWA** | Service Worker + Web App Manifest |
+| **App Type** | Progressive Web App (Service Worker + Manifest) |
 
-> Zero backend. Zero install. Just open and build.
+</div>
 
----
+> ⚡ **Zero backend. Zero install. Just open and build.**
 
-## 📦 Getting Started
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%"/>
+
+## 📦 Quick Start
 
 ```bash
 # Clone the repository
@@ -92,60 +115,83 @@ python3 -m http.server 8000
 open http://localhost:8000
 ```
 
-That's it — no build step, no `npm install` required.
+No build step. No `npm install`. It just works.
 
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%"/>
+
+## 🎯 How It Works
+
+<div align="center">
+
+```mermaid
+flowchart LR
+    A([📋 Pick a Template]) --> B([✍️ Fill Details<br/>or use AI])
+    B --> C([👁️ Live Preview])
+    C --> D([📊 Check ATS Score])
+    D --> E([📄 Download PDF])
+    style A fill:#1f6b42,color:#fff
+    style B fill:#2d8653,color:#fff
+    style C fill:#379e63,color:#fff
+    style D fill:#43b873,color:#fff
+    style E fill:#52c27a,color:#fff
+```
+
+</div>
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%"/>
 
 ## 📁 Project Structure
 
 ```
 Craftez_my_resume/
-├── index.html          # Landing page + ATS checker
-├── form.html           # Resume builder (the core app)
-├── cover.html          # Cover letter builder
-├── style.css           # Global styles
-├── script.js           # Builder logic, preview rendering, ATS scoring
-├── ai.js               # AI assistant module
-├── templates/          # 170+ resume template files
-├── logo.png            # Brand logo
-├── manifest.json       # PWA manifest
-└── service-worker.js   # Offline support
+├── 📄 index.html          # Landing page + ATS checker
+├── 🛠️ form.html           # Resume builder (the core app)
+├── ✉️ cover.html          # Cover letter builder
+├── 🎨 style.css           # Global styles
+├── ⚙️ script.js           # Builder logic, preview, ATS scoring
+├── 🤖 ai.js               # AI assistant module
+├── 📂 templates/          # 170+ resume template files
+├── 🖼️ logo.png            # Brand logo
+├── 📱 manifest.json       # PWA manifest
+└── 🔌 service-worker.js   # Offline support
 ```
 
----
-
-## 🎯 How It Works
-
-1. **Pick a template** from 170+ professional designs
-2. **Fill your details** — or let the AI assistant do it for you
-3. **Watch the live preview** update in real time
-4. **Check your ATS score** and apply the suggested fixes
-5. **Download** your polished, recruiter-ready PDF
-
----
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%"/>
 
 ## 📸 Template Categories
 
-- 🏆 **Premium Picks** — best-in-class one-page designs
-- ✅ **ATS Pro** — recruiter-system optimized layouts
-- 📐 **Classic** — timeless professional formats
-- 🖼️ **Photo** — clean designs with profile photo
-- 🎓 **Academic / CV** — research and education focused
-- 🎨 **Creative** — stand-out modern styles
+<div align="center">
 
----
+| 🏆 Premium Picks | ✅ ATS Pro | 📐 Classic |
+|:---:|:---:|:---:|
+| Best one-page designs | Recruiter-system optimized | Timeless formats |
+| **🖼️ Photo** | **🎓 Academic / CV** | **🎨 Creative** |
+| Clean profile-photo layouts | Research & education focused | Stand-out modern styles |
+
+</div>
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%"/>
 
 ## 👤 Author
 
-**Vignesh S** &nbsp;·&nbsp; [@vignesh2027](https://github.com/vignesh2027)
+<div align="center">
 
----
+**Vignesh S**
+
+[![GitHub](https://img.shields.io/badge/GitHub-vignesh2027-181717?style=for-the-badge&logo=github)](https://github.com/vignesh2027)
+
+</div>
 
 ## 📄 License
 
 Licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
 
----
+<br/>
+
+<!-- ===================== FOOTER ===================== -->
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:52c27a,50:2d8653,100:1f6b42&height=120&section=footer&text=Land%20your%20dream%20job%20%E2%AD%90&fontSize=22&fontColor=ffffff&fontAlignY=70" alt="footer"/>
+</p>
 
 <div align="center">
 
