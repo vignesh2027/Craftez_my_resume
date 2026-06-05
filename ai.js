@@ -158,14 +158,15 @@ function applyAIResume(jsonStr) {
     el.dispatchEvent(new Event('input', { bubbles: true }));
   }
 
-  // ─ Personal info (matches form field IDs exactly) ─
-  set('fullName',  data.name || data.fullName || data.personal?.fullName);
-  set('jobTitle',  data.jobTitle || data.title || data.personal?.jobTitle);
-  set('email',     data.email || data.personal?.email);
-  set('phone',     data.phone || data.personal?.phone);
-  set('location',  data.location || data.personal?.location);
-  set('linkedin',  data.linkedin || data.personal?.linkedin);
-  set('summary',   data.summary || data.personal?.summary);
+  // ─ Personal info — handle flat, personal{}, contact{} structures ─
+  const c = data.contact || data.personal || {};
+  set('fullName',  data.name || data.fullName || c.name || c.fullName);
+  set('jobTitle',  data.jobTitle || data.title || c.jobTitle || c.title || c.position);
+  set('email',     data.email || c.email);
+  set('phone',     data.phone || c.phone || c.phoneNumber || c.mobile);
+  set('location',  data.location || c.location || c.city || c.address);
+  set('linkedin',  data.linkedin || c.linkedin || c.linkedinUrl);
+  set('summary',   data.summary || data.objective || c.summary);
 
   // ─ Skills (IDs: technicalSkills, softSkills, languages) ─
   const tech = data.technicalSkills || data.skills?.technical || data.skills;
@@ -239,12 +240,46 @@ function applyAIResume(jsonStr) {
 
 // ── Resume generation prompt ──────────────────────────────────────
 async function generateResumeFromAI(description, onChunk) {
-  const user = `You are a professional resume writer. Create a complete ATS-optimized resume for: ${description}
+  const user = `Create a complete ATS-optimized resume as JSON for this person: ${description}
 
-IMPORTANT: Return ONLY valid JSON. All string fields must be strings (NOT arrays). Use exactly this format:
-{"name":"Full Name","jobTitle":"Senior Software Engineer","email":"name@email.com","phone":"+91 99999 99999","location":"City, India","linkedin":"linkedin.com/in/username","summary":"3-4 sentence professional summary with strong action verbs and quantifiable achievements like 30% improvement or team of 5 engineers.","technicalSkills":"Java, React, Python, Spring Boot, Node.js, MySQL, Git, Docker","softSkills":"Communication, Leadership, Problem Solving, Team Collaboration","experience":[{"title":"Senior Software Engineer","company":"TCS","startDate":"2020-06","endDate":"2025-05","description":"• Led development of microservices platform reducing latency by 40%\\n• Managed team of 6 engineers delivering 3 major product releases\\n• Implemented CI/CD pipeline cutting deployment time by 60%"},{"title":"Software Engineer","company":"TCS","startDate":"2018-06","endDate":"2020-05","description":"• Built RESTful APIs for 500K+ daily users\\n• Reduced database query time by 35% through optimization\\n• Collaborated with cross-functional team of 12 members"}],"education":[{"degree":"B.Tech Computer Science","school":"Vels University","year":"2020"}],"projects":"E-Commerce Platform — Built scalable platform using React and Java serving 10K+ users daily\\nInventory Management System — Developed real-time system with Python reducing manual work by 70%","certifications":"AWS Solutions Architect Associate — Amazon, 2023\\nOracle Java Certified Professional — Oracle, 2021","awards":"Best Employee Q3 2022 — TCS\\nInnovation Award 2021 — TCS","languages":"English (Fluent), Tamil (Native), Hindi (Conversational)"}
+OUTPUT RULES — follow exactly:
+- Return ONLY a JSON object, no markdown, no explanation, nothing else
+- Every value must be a STRING (not array, not object)
+- Use EXACTLY these field names (no renaming, no nesting under "contact" or "personal"):
 
-Fill realistic details based on the user description. Keep all field values as STRINGS, not arrays.`;
+{
+  "name": "Full Name",
+  "jobTitle": "Job Title",
+  "email": "email@example.com",
+  "phone": "+91 99999 99999",
+  "location": "City, State, India",
+  "linkedin": "linkedin.com/in/username",
+  "summary": "3-4 sentence professional summary with achievements and numbers.",
+  "technicalSkills": "Skill1, Skill2, Skill3, Skill4, Skill5",
+  "softSkills": "Communication, Leadership, Problem Solving",
+  "languages": "English (Fluent), Tamil (Native)",
+  "experience": [
+    {
+      "title": "Job Title",
+      "company": "Company Name",
+      "startDate": "2022-06",
+      "endDate": "2025-05",
+      "description": "• Achievement with numbers\n• Second achievement\n• Third achievement"
+    }
+  ],
+  "education": [
+    {
+      "degree": "B.Tech Computer Science",
+      "school": "University Name",
+      "year": "2022"
+    }
+  ],
+  "projects": "Project 1 — Description of what it does and impact\nProject 2 — Description",
+  "certifications": "Cert Name — Issuer, Year\nCert Name 2 — Issuer, Year",
+  "awards": "Award Name — Company, Year"
+}
+
+Fill all fields with realistic professional details based on the description. If info is not given, infer reasonable defaults.`;
 
   const result = await callGroqLow(user, 3000);
   if (onChunk) onChunk(result);
@@ -294,9 +329,19 @@ async function sendAIMessage() {
   try {
     const lower = text.toLowerCase();
 
-    if (lower.includes('i am') || lower.includes("i'm") || lower.includes('fill') ||
-        lower.includes('generate') || lower.includes('create') || lower.includes('i have') ||
-        lower.includes('my background') || lower.includes('years of experience')) {
+    const isFillIntent =
+      lower.includes('i am') || lower.includes("i'm") || lower.includes('i have') ||
+      lower.includes('fill') || lower.includes('generate') || lower.includes('create') ||
+      lower.includes('my background') || lower.includes('years of experience') ||
+      lower.includes('year experience') || lower.includes('yrs experience') ||
+      lower.includes('worked at') || lower.includes('working at') || lower.includes('currently at') ||
+      lower.includes('b.tech') || lower.includes('btech') || lower.includes('b.e') ||
+      lower.includes('mba') || lower.includes('m.tech') || lower.includes('bsc') || lower.includes('degree') ||
+      lower.includes('engineer') || lower.includes('developer') || lower.includes('designer') ||
+      lower.includes('manager') || lower.includes('analyst') || lower.includes('intern') ||
+      lower.includes('fresher') || lower.includes('graduate') || lower.includes('student') ||
+      /\d+\s*years?/.test(lower) || /\d+\s*yrs?/.test(lower);
+    if (isFillIntent) {
       updateStreamingMessage(bubble, '⏳ Generating your complete resume...');
       const json = await generateResumeFromAI(text);
       if (!json) throw new Error('No response from AI');
