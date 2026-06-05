@@ -82,18 +82,19 @@ async function callGroq(systemPrompt, userPrompt, maxTokens, fast) {
 // ── Apply AI resume to ALL form fields (with correct selectors) ───
 // Robust JSON extractor — counts brace depth to find matching {} even if AI adds text after
 function extractJSON(text) {
-  const start = text.indexOf('{');
-  if (start === -1) return null;
-  let depth = 0, inStr = false, esc = false;
-  for (let i = start; i < text.length; i++) {
-    const c = text[i];
-    if (esc) { esc = false; continue; }
-    if (c === '\\' && inStr) { esc = true; continue; }
-    if (c === '"') { inStr = !inStr; continue; }
-    if (!inStr) {
-      if (c === '{') depth++;
-      else if (c === '}' && --depth === 0) return text.slice(start, i + 1);
-    }
+  // Strategy 1: direct JSON.parse after cleanup
+  let clean = text.replace(/```json/gi,'').replace(/```/g,'').trim();
+  // Remove actual newlines inside strings (model sometimes outputs these)
+  clean = clean.replace(/:\s*"([^"]*)"/g, (m, v) => ': "' + v.replace(/\n/g,' ').replace(/\r/g,'') + '"');
+  try { JSON.parse(clean); return clean; } catch(_) {}
+  // Strategy 2: find first { to last }
+  const s = clean.indexOf('{'), e = clean.lastIndexOf('}');
+  if (s !== -1 && e > s) {
+    const slice = clean.slice(s, e + 1);
+    try { JSON.parse(slice); return slice; } catch(_) {}
+    // Strategy 3: sanitize invalid newlines inside the slice then retry
+    const fixed = slice.replace(/:\s*"([\s\S]*?)"/g, (m, v) => ': "' + v.replace(/\n/g,'\\n').replace(/\r/g,'') + '"');
+    try { JSON.parse(fixed); return fixed; } catch(_) {}
   }
   return null;
 }
@@ -101,13 +102,11 @@ function extractJSON(text) {
 function applyAIResume(jsonStr) {
   let data;
   try {
-    let clean = jsonStr.replace(/```json/gi,'').replace(/```/g,'').trim();
-    const extracted = extractJSON(clean);
-    if (!extracted) throw new Error('No JSON object found in response');
+    const extracted = extractJSON(jsonStr);
+    if (!extracted) throw new Error('No JSON found');
     data = JSON.parse(extracted);
   } catch(e) {
-    console.error('[CMR AI] JSON parse failed:', e.message);
-    console.error('[CMR AI] Raw response:', jsonStr.slice(0, 400));
+    console.error('[CMR AI] parse failed:', e.message, '| raw:', jsonStr.slice(0, 300));
     return false;
   }
 
