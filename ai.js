@@ -4,7 +4,8 @@
  */
 
 const GROQ_BASE = 'https://api.groq.com/openai/v1';
-const GROQ_MODEL = 'llama-3.1-8b-instant';
+const GROQ_MODEL = 'llama-3.3-70b-versatile';   // better JSON reliability
+const GROQ_FAST  = 'llama-3.1-8b-instant';       // used for quick chat only
 const _k = (p=>atob(p.join('')))(['Z3NrX','3BuOFh','tVVl5VF','M2VldrW','EF1QUpx','V0dkeWI','zRllKOT','B3MXc2M','2lFd3BY','d3J5cmV','Yb3dtblA=']);
 const DEVICE_DAILY_LIMIT = 500;
 
@@ -56,14 +57,14 @@ async function callGroqLow(userPrompt, maxTokens) {
 }
 
 // ── Core Groq call ────────────────────────────────────────────────
-async function callGroq(systemPrompt, userPrompt, maxTokens) {
+async function callGroq(systemPrompt, userPrompt, maxTokens, fast) {
   if (getRemainingToday() <= 0) throw new Error('Daily limit reached. Resets at midnight.');
   bumpRate();
   const res = await fetch(`${GROQ_BASE}/chat/completions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_k}` },
     body: JSON.stringify({
-      model: GROQ_MODEL,
+      model: fast ? GROQ_FAST : GROQ_MODEL,
       messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
       max_tokens: maxTokens || 2048,
       temperature: 0.7
@@ -245,7 +246,7 @@ IMPORTANT: Return ONLY valid JSON. All string fields must be strings (NOT arrays
 
 Fill realistic details based on the user description. Keep all field values as STRINGS, not arrays.`;
 
-  const result = await callGroqLow(user, 2000);
+  const result = await callGroqLow(user, 3000);
   if (onChunk) onChunk(result);
   return result;
 }
@@ -308,7 +309,6 @@ async function sendAIMessage() {
       updateStreamingMessage(bubble, '⏳ Writing a complete professional summary...');
       const sumEl = document.getElementById('summary');
       const jobEl = document.getElementById('jobTitle');
-      const nameEl = document.getElementById('fullName');
       const techEl = document.getElementById('technicalSkills');
       // Gather full context from the whole resume, not just old summary
       const expText = (document.querySelector('.preview-content #previewExperience')?.innerText || '').slice(0, 800);
@@ -338,7 +338,7 @@ async function sendAIMessage() {
       const title = document.getElementById('jobTitle')?.value || '';
       const sum = document.getElementById('summary')?.value || '';
       const letter = await callGroq('You are a professional cover letter writer.',
-        `Write a professional cover letter. Name: ${name}. Title: ${title}. Background: ${sum}. 3 paragraphs, 220 words, specific and confident.`, 500);
+        `Write a professional cover letter. Name: ${name}. Title: ${title}. Background: ${sum}. 3 paragraphs, 220 words, specific and confident.`, 500, true);
       updateStreamingMessage(bubble, letter || '❌ Could not write cover letter.');
 
     } else if (lower.includes('analyze') || lower.includes('ats') || lower.includes('feedback') || lower.includes('score')) {
@@ -347,7 +347,7 @@ async function sendAIMessage() {
       const resumeText = (preview?.innerText || '').slice(0, 2500) || 'No resume content yet.';
       const analysis = await callGroq(
         'You are a strict ATS expert and resume coach.',
-        `Analyze this resume and give 6 specific actionable improvements. Be direct and practical. Number each one.\n\n${resumeText}`, 600
+        `Analyze this resume and give 6 specific actionable improvements. Be direct and practical. Number each one.\n\n${resumeText}`, 600, true
       );
       updateStreamingMessage(bubble, analysis || '❌ Could not analyze.');
 
@@ -357,7 +357,7 @@ async function sendAIMessage() {
       const expText = preview?.querySelector('#previewExperience')?.innerText || '';
       const improved = await callGroq(
         'You are a resume expert. Rewrite experience bullet points to be more impactful with strong action verbs and quantifiable results.',
-        `Rewrite these experience descriptions with stronger action verbs and measurable achievements. Return just the improved bullet points.\n\n${expText.slice(0,1000)}`, 600
+        `Rewrite these experience descriptions with stronger action verbs and measurable achievements. Return just the improved bullet points.\n\n${expText.slice(0,1000)}`, 600, true
       );
       updateStreamingMessage(bubble, improved || '❌ Could not improve experience.');
 
@@ -365,7 +365,7 @@ async function sendAIMessage() {
       updateStreamingMessage(bubble, '⏳ Thinking...');
       const answer = await callGroq(
         'You are a professional resume and career expert. Give helpful, concise career advice.',
-        text, 500
+        text, 500, true
       );
       updateStreamingMessage(bubble, answer || '❌ No response received.');
     }
