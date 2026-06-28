@@ -2,6 +2,8 @@
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1f6b42,50:2d8653,100:52c27a&height=200&section=header&text=Craftez%20My%20Resume&fontSize=52&fontColor=ffffff&fontAlignY=38&desc=Build%20a%20professional%20ATS-ready%20resume%20in%20minutes&descSize=18&descAlignY=60&descAlign=50" alt="Craftez My Resume"/>
 </p>
+ <img width="3338" height="1662" alt="image" src="https://github.com/user-attachments/assets/a0364400-60c5-479b-bc95-29893c56737a" />
+ 
 
 <!-- ===================== LOGO + TYPING ===================== -->
 <div align="center">
