@@ -315,6 +315,38 @@ function updateStreamingMessage(div, text) {
   if (m) m.scrollTop = m.scrollHeight;
 }
 
+// ── AI intent classifier — replaces fragile keyword matching ─────
+async function classifyIntent(text) {
+  try {
+    const out = await callGroq(
+      'You classify messages for a resume-builder assistant. Reply with EXACTLY ONE word:\n' +
+      'FILL — user describes their background/career and wants a resume created or filled from it\n' +
+      'SUMMARY — user explicitly wants their resume\'s professional summary section written or improved\n' +
+      'COVER — user wants a cover letter\n' +
+      'ANALYZE — user wants ATS score, feedback or analysis of their resume\n' +
+      'EXPERIENCE — user wants their experience bullet points improved\n' +
+      'CHAT — anything else: any question (including about templates, designs, colors, the builder), greetings, general advice',
+      text, 6, true);
+    const m = (out || '').toUpperCase().match(/FILL|SUMMARY|COVER|ANALYZE|EXPERIENCE|CHAT/);
+    if (m) return m[0];
+  } catch (_) {}
+  return null;
+}
+
+function keywordIntent(lower) {
+  const isFill =
+    lower.includes('fill') || lower.includes('generate') || lower.includes('create my resume') ||
+    lower.includes('my background') || lower.includes('years of experience') ||
+    lower.includes('worked at') || lower.includes('working at') ||
+    /\d+\s*(years?|yrs?)/.test(lower);
+  if (isFill) return 'FILL';
+  if ((lower.includes('improve') || lower.includes('rewrite') || lower.includes('write')) && lower.includes('summary')) return 'SUMMARY';
+  if (lower.includes('cover letter')) return 'COVER';
+  if (lower.includes('analyze') || lower.includes('ats') || lower.includes('feedback') || lower.includes('score')) return 'ANALYZE';
+  if (lower.includes('improve experience') || lower.includes('better experience')) return 'EXPERIENCE';
+  return 'CHAT';
+}
+
 // ── Main send ─────────────────────────────────────────────────────
 async function sendAIMessage() {
   const input = document.getElementById('aiInput');
@@ -331,19 +363,10 @@ async function sendAIMessage() {
   try {
     const lower = text.toLowerCase();
 
-    const isFillIntent =
-      lower.includes('i am') || lower.includes("i'm") || lower.includes('i have') ||
-      lower.includes('fill') || lower.includes('generate') || lower.includes('create') ||
-      lower.includes('my background') || lower.includes('years of experience') ||
-      lower.includes('year experience') || lower.includes('yrs experience') ||
-      lower.includes('worked at') || lower.includes('working at') || lower.includes('currently at') ||
-      lower.includes('b.tech') || lower.includes('btech') || lower.includes('b.e') ||
-      lower.includes('mba') || lower.includes('m.tech') || lower.includes('bsc') || lower.includes('degree') ||
-      lower.includes('engineer') || lower.includes('developer') || lower.includes('designer') ||
-      lower.includes('manager') || lower.includes('analyst') || lower.includes('intern') ||
-      lower.includes('fresher') || lower.includes('graduate') || lower.includes('student') ||
-      /\d+\s*years?/.test(lower) || /\d+\s*yrs?/.test(lower);
-    if (isFillIntent) {
+    // AI decides what the user wants; keyword matching only as offline fallback
+    const intent = (await classifyIntent(text)) || keywordIntent(lower);
+
+    if (intent === 'FILL') {
       updateStreamingMessage(bubble, '⏳ Generating your complete resume...');
       const json = await generateResumeFromAI(text);
       if (!json) throw new Error('No response from AI');
@@ -352,7 +375,7 @@ async function sendAIMessage() {
         ? '✅ Done! Your entire resume has been filled — name, summary, experience, education, skills, and more. Review the preview and edit anything you want.'
         : '⚠️ AI generated a resume but had trouble parsing it. Try being more specific:\n"I am a software engineer with 5 years at TCS, B.Tech CS from VIT 2020, skilled in Java, React, Python"');
 
-    } else if ((lower.includes('improve') || lower.includes('rewrite') || lower.includes('write')) && lower.includes('summary')) {
+    } else if (intent === 'SUMMARY') {
       updateStreamingMessage(bubble, '⏳ Writing a complete professional summary...');
       const sumEl = document.getElementById('summary');
       const jobEl = document.getElementById('jobTitle');
@@ -379,7 +402,7 @@ async function sendAIMessage() {
       }
       updateStreamingMessage(bubble, improved ? `✅ New summary written from your full profile!\n\n"${improved.trim().slice(0,140)}..."` : '❌ Could not write summary.');
 
-    } else if (lower.includes('cover letter')) {
+    } else if (intent === 'COVER') {
       updateStreamingMessage(bubble, '⏳ Writing your cover letter...');
       const name = document.getElementById('fullName')?.value || '';
       const title = document.getElementById('jobTitle')?.value || '';
@@ -388,7 +411,7 @@ async function sendAIMessage() {
         `Write a professional cover letter. Name: ${name}. Title: ${title}. Background: ${sum}. 3 paragraphs, 220 words, specific and confident.`, 500, true);
       updateStreamingMessage(bubble, letter || '❌ Could not write cover letter.');
 
-    } else if (lower.includes('analyze') || lower.includes('ats') || lower.includes('feedback') || lower.includes('score')) {
+    } else if (intent === 'ANALYZE') {
       updateStreamingMessage(bubble, '⏳ Analyzing your resume...');
       const preview = document.querySelector('.preview-content');
       const resumeText = (preview?.innerText || '').slice(0, 2500) || 'No resume content yet.';
@@ -398,7 +421,7 @@ async function sendAIMessage() {
       );
       updateStreamingMessage(bubble, analysis || '❌ Could not analyze.');
 
-    } else if (lower.includes('improve experience') || lower.includes('better experience')) {
+    } else if (intent === 'EXPERIENCE') {
       updateStreamingMessage(bubble, '⏳ Improving your experience bullets...');
       const preview = document.querySelector('.preview-content');
       const expText = preview?.querySelector('#previewExperience')?.innerText || '';
@@ -410,9 +433,12 @@ async function sendAIMessage() {
 
     } else {
       updateStreamingMessage(bubble, '⏳ Thinking...');
+      // Give the model the user's actual resume so answers are personal, not generic
+      const resumeCtx = (document.querySelector('.preview-content')?.innerText || '').slice(0, 1500);
       const answer = await callGroq(
-        'You are a professional resume and career expert. Give helpful, concise career advice.',
-        text, 500, true
+        'You are the AI assistant inside the CMR resume builder. Answer the user\'s question directly and concisely (under 150 words), referring to THEIR resume below when relevant. Never give generic career-coaching lectures or lists of services. If they seem to want a resume action, tell them the exact command: "fill my resume...", "improve my summary", "write cover letter", or "analyze my resume".' +
+        (resumeCtx ? `\n\nUSER'S CURRENT RESUME:\n${resumeCtx}` : ''),
+        text, 400, true
       );
       updateStreamingMessage(bubble, answer || '❌ No response received.');
     }
