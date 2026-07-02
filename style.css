@@ -4497,14 +4497,45 @@ body {
   line-height: 1.4;
 }
 
+/* ── Template search / finder ────────────────────────────────── */
+.tpl-finder { margin: 4px 0 10px; }
+.tpl-search-input {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 0.85rem;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.18s;
+}
+.tpl-search-input:focus { border-color: var(--primary-color); }
+.tpl-hint {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+.tpl-no-results {
+  display: none;
+  padding: 14px 10px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
 /* ── Sidebar 3-Tab Navigation ────────────────────────────────── */
 .sidebar-tab-bar {
   display: flex;
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   border-bottom: 2px solid var(--border-color);
-  padding: 4px 8px 0;
-  gap: 2px;
-  height: 52px;
+  padding: 8px;
+  gap: 6px;
+  height: 74px;
   flex-shrink: 0;
   position: sticky;
   top: 0;
@@ -4512,28 +4543,33 @@ body {
 }
 .stab {
   flex: 1;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  padding: 8px 4px 10px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--text-muted);
+  background: var(--bg-primary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  padding: 6px 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-primary);
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   transition: all 0.18s;
 }
-.stab:hover { color: var(--primary-color); }
-.stab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+.stab:hover { color: var(--primary-color); border-color: var(--primary-color); }
+.stab.active {
+  color: #fff;
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  box-shadow: 0 3px 8px rgba(45, 134, 83, 0.35);
+}
 
 /* Panes: take remaining height after tab bar, scroll inside */
 .sidebar-pane {
   display: none;
-  height: calc(100% - 52px);
+  height: calc(100% - 74px);
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
@@ -4643,11 +4679,11 @@ body:has(.builder-container) {
   border-right: 1px solid var(--border-color) !important;
 }
 
-/* Tab bar: fixed 52px at top of sidebar */
+/* Tab bar: fixed 74px at top of sidebar */
 .builder-container .sidebar-tab-bar {
-  flex: 0 0 52px !important;
-  height: 52px !important;
-  min-height: 52px !important;
+  flex: 0 0 74px !important;
+  height: 74px !important;
+  min-height: 74px !important;
   position: static !important;
   top: auto !important; left: auto !important; right: auto !important;
 }

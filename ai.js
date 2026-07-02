@@ -6,7 +6,7 @@
 const GROQ_BASE = 'https://api.groq.com/openai/v1';
 const GROQ_MODEL = 'llama-3.3-70b-versatile';   // better JSON reliability
 const GROQ_FAST  = 'llama-3.1-8b-instant';       // used for quick chat only
-const _k = (p=>atob(p.join('')))(['Z3NrX','3BuOFh','tVVl5VF','M2VldrW','EF1QUpx','V0dkeWI','zRllKOT','B3MXc2M','2lFd3BY','d3J5cmV','Yb3dtblA=']);
+const _k = (p=>atob(p.join('')))(['Z3NrX3p','QWVVQc0','9xVk50T','kthbm5E','YnJpV0d','keWIzRl','lCb0hZT','WdKWktG','ZHMzaHp','1ZEl0bT','hFNTY=']);
 const DEVICE_DAILY_LIMIT = 500;
 
 // ── Rate limiter ──────────────────────────────────────────────────
@@ -43,11 +43,13 @@ async function callGroqLow(userPrompt, maxTokens) {
     body: JSON.stringify({
       model: GROQ_MODEL,
       messages: [
-        { role: 'system', content: 'You are a resume writer. Output ONLY a valid JSON object. No text before or after the JSON. No notes. No explanations. Just the JSON.' },
+        { role: 'system', content: 'You are an expert resume writer. Output ONLY a valid JSON object. No text before or after the JSON. Every generation must be fresh and unique — never repeat previous phrasing, never copy example placeholder values.' },
         { role: 'user', content: userPrompt }
       ],
+      response_format: { type: 'json_object' },  // guarantees valid JSON even at high temperature
       max_tokens: maxTokens || 2000,
-      temperature: 0.1  // very low temperature = consistent, no creative additions
+      temperature: 0.9,
+      seed: Math.floor(Math.random() * 1000000)
     })
   });
   if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e?.error?.message||`Error ${res.status}`); }
@@ -278,7 +280,8 @@ OUTPUT RULES — follow exactly:
   "awards": "Award Name — Company, Year"
 }
 
-Fill all fields with realistic professional details based on the description. If info is not given, infer reasonable defaults.`;
+Fill all fields with realistic professional details based on the description. If info is not given, infer reasonable defaults.
+IMPORTANT: The values above are FORMAT examples only — never copy them. Write completely fresh, specific, unique content tailored to this person: vary the wording, achievements, numbers and skills every time.`;
 
   const result = await callGroqLow(user, 3000);
   if (onChunk) onChunk(result);

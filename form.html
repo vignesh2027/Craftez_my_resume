@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Builder - CMR</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=5">
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- BUILDER LAYOUT — inline CSS always wins over external rules -->
@@ -33,21 +33,41 @@
       }
 
       .builder-container .sidebar-tab-bar {
-        height: 60px !important; min-height: 60px !important;
+        height: 74px !important; min-height: 74px !important;
         flex-shrink: 0 !important; flex-grow: 0 !important;
         display: flex !important; align-items: stretch !important;
-        background: #fefdf8 !important;
+        background: #eef6ec !important;
         border-bottom: 2px solid #cce5d3 !important;
-        padding: 0 6px !important; gap: 2px !important;
+        padding: 8px 8px !important; gap: 6px !important;
         position: static !important; top: auto !important;
         width: auto !important;
       }
       .builder-container .sidebar-tab-bar .stab {
         display: flex !important; flex-direction: column !important;
         align-items: center !important; justify-content: center !important;
-        gap: 3px !important; padding: 8px 6px !important;
-        font-size: 0.73rem !important; white-space: nowrap !important;
+        gap: 4px !important; padding: 6px 4px !important;
+        font-size: 0.78rem !important; font-weight: 700 !important;
+        white-space: nowrap !important;
         min-height: 0 !important; overflow: visible !important;
+        flex: 1 !important;
+        background: #ffffff !important;
+        color: #33413a !important;
+        border: 1.5px solid #cce5d3 !important;
+        border-radius: 10px !important;
+        margin-bottom: 0 !important;
+        transition: all 0.18s !important;
+      }
+      .builder-container .sidebar-tab-bar .stab svg {
+        width: 20px !important; height: 20px !important;
+      }
+      .builder-container .sidebar-tab-bar .stab:hover {
+        border-color: #2d8653 !important; color: #2d8653 !important;
+      }
+      .builder-container .sidebar-tab-bar .stab.active {
+        background: #2d8653 !important;
+        color: #ffffff !important;
+        border-color: #2d8653 !important;
+        box-shadow: 0 3px 8px rgba(45,134,83,0.35) !important;
       }
 
       .builder-container .sidebar-pane {
@@ -60,7 +80,7 @@
       }
       .builder-container .sidebar-pane.active {
         display: block !important;
-        height: calc(100% - 60px) !important;
+        height: calc(100% - 74px) !important;
         flex: none !important;
         overflow-y: auto !important;
       }
@@ -173,17 +193,17 @@
         <aside class="sidebar">
             <!-- 3-Tab bar — fixed at top -->
             <div class="sidebar-tab-bar">
-                <button class="stab active" id="stab-btn-templates" onclick="showSidebarTab('templates')" title="Choose Template">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <button class="stab active" id="stab-btn-templates" onclick="showSidebarTab('templates')" title="Step 1 — Pick a resume design">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                     Templates
                 </button>
-                <button class="stab" id="stab-btn-design" onclick="showSidebarTab('design')" title="Colours & Fonts">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20"/><path d="M12 12l6-6"/></svg>
+                <button class="stab" id="stab-btn-design" onclick="showSidebarTab('design')" title="Step 2 — Colours & fonts">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="17.5" cy="10.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12.5" r="1.5" fill="currentColor" stroke="none"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.8-.1 2.5-.4.7-.3 1-1.1.7-1.8-.2-.5-.2-1.1 0-1.6.4-.9 1.3-1.4 2.3-1.2l1.5.3c1.6.3 3-1 3-2.6C22 7 17.5 2 12 2z"/></svg>
                     Design
                 </button>
-                <button class="stab" id="stab-btn-tools" onclick="showSidebarTab('tools')" title="Download & ATS">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                    Tools
+                <button class="stab" id="stab-btn-tools" onclick="showSidebarTab('tools')" title="Step 3 — ATS score & download">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download
                 </button>
             </div>
 
@@ -193,6 +213,12 @@
                     <div class="builder-mode-switch">
                         <button class="bmode-btn active" id="resumeModeBtn" onclick="switchBuilderMode('resume')">📄 Resume</button>
                         <button class="bmode-btn" id="cvModeBtn" onclick="switchBuilderMode('cv')">🎓 CV</button>
+                    </div>
+
+                    <div class="tpl-finder">
+                        <input type="text" id="tplSearch" class="tpl-search-input" placeholder="🔍 Search templates… e.g. ats, modern, photo" oninput="filterTemplates(this.value)" autocomplete="off">
+                        <div class="tpl-hint">👋 New here? Start with <b>✅ ATS Pro Designs</b> — best for job portals like Naukri & LinkedIn. Click any card to apply it instantly.</div>
+                        <div class="tpl-no-results" id="tplNoResults">No templates match — try “ats”, “modern”, “photo” or “tech”</div>
                     </div>
 
                     <!-- Hidden select kept for script.js compatibility -->
@@ -356,8 +382,6 @@
                             <div class="tpl-card" data-value="creativePhoto2" onclick="pickTemplate('creativePhoto2')"><div class="tpl-thumb tp-premium" style="background:linear-gradient(135deg,#f39c12,#e74c3c)"><div class="tpl-photo-dot"></div></div><span>Retro</span></div>
                             <div class="tpl-card" data-value="creative13" onclick="pickTemplate('creative13')"><div class="tpl-thumb" style="background:#1a2e20"><div class="tpl-hex"></div></div><span>Hexagon</span></div>
                         </div>
-                    </div>
-
 
                         <div class="tpl-cat-row"><span class="tpl-cat-lbl">ATS Optimized</span></div>
                         <div class="tpl-grid">
@@ -556,6 +580,7 @@
                             <div class="tpl-card" data-value="yellowIconHighlights" onclick="pickTemplate('yellowIconHighlights')"><div class="tpl-thumb" style="background:#fff;border-top:4px solid #f59e0b"><div class="tpl-lines"></div></div><span>Yellow Icons</span></div>
                             <div class="tpl-card" data-value="greenAccentProfessional" onclick="pickTemplate('greenAccentProfessional')"><div class="tpl-thumb" style="background:#fff;border-top:4px solid #2d8653"><div class="tpl-lines"></div></div><span>Green Accent</span></div>
                         </div>
+                    </div>
 
                     <!-- Visual Card Picker — CV Mode -->
                     <div class="tpl-picker-wrap" id="cvPickerWrap" style="display:none">
@@ -1261,7 +1286,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="script.js"></script>
-    <script src="ai.js?v=4"></script>
+    <script src="ai.js?v=5"></script>
     <script>
     // ── Form Completion Progress Bar ──────────────────────────────
     function updateFormProgress() {
@@ -1423,6 +1448,30 @@
         const activeResume = document.querySelector('.tpl-card.active');
         if (!activeResume) pickTemplate('modern');
       }
+    }
+
+    // ── Template search filter ─────────────────────────────────────
+    function filterTemplates(q) {
+      q = (q || '').trim().toLowerCase();
+      const wrap = document.getElementById('resumePickerWrap');
+      if (!wrap) return;
+      let any = false;
+      wrap.querySelectorAll('.tpl-grid').forEach(grid => {
+        const row = grid.previousElementSibling;
+        const catLabel = (row && row.classList.contains('tpl-cat-row')) ? row.textContent.toLowerCase() : '';
+        let visible = 0;
+        grid.querySelectorAll('.tpl-card').forEach(card => {
+          const name = ((card.querySelector('span')?.textContent || '') + ' ' + (card.dataset.value || '')).toLowerCase();
+          const show = !q || name.includes(q) || catLabel.includes(q);
+          card.style.display = show ? '' : 'none';
+          if (show) visible++;
+        });
+        grid.style.display = visible ? '' : 'none';
+        if (row && row.classList.contains('tpl-cat-row')) row.style.display = visible ? '' : 'none';
+        if (visible) any = true;
+      });
+      const empty = document.getElementById('tplNoResults');
+      if (empty) empty.style.display = any ? 'none' : 'block';
     }
 
     // ── Auto-hide empty sections in any template ──────────────────
