@@ -1,5 +1,5 @@
 // Bump this version on every meaningful update to purge old caches
-const CACHE_NAME = "cmr-resume-v5"
+const CACHE_NAME = "cmr-resume-v6"
 
 const urlsToCache = [
   "/",

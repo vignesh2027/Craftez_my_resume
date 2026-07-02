@@ -59,7 +59,7 @@ async function callGroqLow(userPrompt, maxTokens) {
 }
 
 // ── Core Groq call ────────────────────────────────────────────────
-async function callGroq(systemPrompt, userPrompt, maxTokens, fast) {
+async function callGroq(systemPrompt, userPrompt, maxTokens, fast, temp) {
   if (getRemainingToday() <= 0) throw new Error('Daily limit reached. Resets at midnight.');
   bumpRate();
   const res = await fetch(`${GROQ_BASE}/chat/completions`, {
@@ -69,7 +69,8 @@ async function callGroq(systemPrompt, userPrompt, maxTokens, fast) {
       model: fast ? GROQ_FAST : GROQ_MODEL,
       messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
       max_tokens: maxTokens || 2048,
-      temperature: 0.7
+      temperature: temp ?? 0.7,
+      seed: Math.floor(Math.random() * 1000000)
     })
   });
   if (!res.ok) {
@@ -239,6 +240,24 @@ function applyAIResume(jsonStr) {
   return true;
 }
 
+// ── Summary style rotator ─────────────────────────────────────────
+// Force a different structure every time — models converge on the same
+// 2-3 stock openings ("Results-driven…") no matter the temperature
+let _lastStyleIdx = -1;
+function randomSummaryStyle() {
+  const styles = [
+    'Open with years of experience and core domain, e.g. "Cloud Engineer with 4+ years…". Never start with an adjective.',
+    'Open with your single biggest measurable achievement, metric first. Never start with a job title or adjective.',
+    'Open with a verb phrase about what you build or deliver, e.g. "Designing and shipping…". No adjectives in the first five words.',
+    'Open with your specialization + the business outcome it drives. Do not start with "Results-driven", "Transformational" or any adjective.',
+    'Open with the tools/platforms you master, leading into impact, e.g. "AWS, Kubernetes and Terraform specialist who…".'
+  ];
+  let i;
+  do { i = Math.floor(Math.random() * styles.length); } while (i === _lastStyleIdx);
+  _lastStyleIdx = i;
+  return styles[i];
+}
+
 // ── Resume generation prompt ──────────────────────────────────────
 async function generateResumeFromAI(description, onChunk) {
   const user = `Create a complete ATS-optimized resume as JSON for this person: ${description}
@@ -281,7 +300,8 @@ OUTPUT RULES — follow exactly:
 }
 
 Fill all fields with realistic professional details based on the description. If info is not given, infer reasonable defaults.
-IMPORTANT: The values above are FORMAT examples only — never copy them. Write completely fresh, specific, unique content tailored to this person: vary the wording, achievements, numbers and skills every time.`;
+IMPORTANT: The values above are FORMAT examples only — never copy them. Write completely fresh, specific, unique content tailored to this person: vary the wording, achievements, numbers and skills every time.
+Summary style for THIS generation (mandatory): ${randomSummaryStyle()} Never open the summary with "Results-driven", "Highly motivated", "Transformational", "Dynamic" or "Detail-oriented".`;
 
   const result = await callGroqLow(user, 3000);
   if (onChunk) onChunk(result);
@@ -390,10 +410,11 @@ async function sendAIMessage() {
         eduText ? `Education: ${eduText}` : '',
         sumEl?.value ? `Existing summary (for reference only): ${sumEl.value}` : ''
       ].filter(Boolean).join('\n');
+      const style = randomSummaryStyle();
       const improved = await callGroq(
-        'You are an elite resume writer. Write powerful, ATS-optimized professional summaries based on the candidate\'s FULL background — their experience, skills, and education — not just their old summary.',
-        `Write a brand-new, complete professional summary for this candidate based on ALL their details below. Make it 3-4 impactful sentences with strong action verbs, quantifiable achievements, and keywords for their target role. Do NOT just rephrase the old summary — build a fresh one from their whole profile. Return ONLY the summary text, no quotes, no preamble.\n\n${ctx || 'A professional seeking new opportunities.'}`,
-        350
+        'You are an elite resume writer. Write powerful, ATS-optimized professional summaries based on the candidate\'s FULL background — their experience, skills, and education — not just their old summary. BANNED OPENINGS: "Results-driven", "Transformational", "Highly motivated", "Dynamic", "Seasoned", "Detail-oriented".',
+        `Write a brand-new, complete professional summary for this candidate based on ALL their details below. 3-4 impactful sentences with strong action verbs, quantifiable achievements, and keywords for their target role.\n\nMANDATORY STYLE FOR THIS VERSION: ${style}\n\nIt must be COMPLETELY different in wording, opening words and sentence structure from the existing summary below — if any phrase matches it, rewrite. Return ONLY the summary text, no quotes, no preamble.\n\n${ctx || 'A professional seeking new opportunities.'}`,
+        350, false, 1.0
       );
       if (improved && sumEl) {
         sumEl.value = improved.trim().replace(/^["']|["']$/g, '');
